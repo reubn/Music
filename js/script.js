@@ -13,6 +13,7 @@ function clickedSONG(a, b) {
     a = a.querySelectorAll("track")[0].getAttribute("href");
     location.href = a;
   });
+  location.href = "spotify:search:" + b;
   $(".chngBG").remove();
   $("head").append("<style class='chngBG'>body::before{ background-image:url(" + a + ")!important;}</style>");
 }
