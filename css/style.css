@@ -57,11 +57,13 @@ body {
     overflow: hidden;
     -webkit-transition: all 0.5s;
     transition: all 0.5s;
+    white-space: nowrap;
 }
 .song:hover {
     cursor: pointer;
     color: #FFF;
     opacity: 0.7;
+    white-space: normal;
 }
 .song > p {
     margin: 0;
@@ -75,6 +77,7 @@ body {
     padding: 0;
     font-size: 1.5em;
     font-weight: 500;
+     white-space: inherit!important;
 }
 .art {
     border-radius: 2%;
