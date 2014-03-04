@@ -1,11 +1,9 @@
 if (window.location.hash) {
-
     hashPlay = window.open(window.location.hash.split("#").join("spotify:track:"));
     hashPlay.close();
 }
 
-$.get("//itunes.apple.com/gb/rss/topsongs/limit=50/explicit=true/xml")
-    .done(function (data) {
+$.get("//itunes.apple.com/gb/rss/topsongs/limit=50/explicit=true/xml", function (data) {
         var items = data.querySelectorAll("entry");
 
         for (var n = 0; n < items.length; n++) {
@@ -27,8 +25,7 @@ function addslashes(a) {
 function clickedSONG(bgURL, spotifyURL) {
     $.get("//ws.spotify.com/search/1/track", {
         "q": spotifyURL
-    })
-        .done(function (data) {
+    }, function (data) {
             var item = data.querySelectorAll("track")[0].getAttribute('href');
             history.pushState(item, "", item.split("spotify:track:").join("#"));
             //window.location.assign("spotify:search:track:" + spotifyURL);
