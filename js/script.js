@@ -1,3 +1,9 @@
+if (window.location.hash) {
+
+    hashPlay = window.open(window.location.hash.split("#").join("spotify:track:"));
+    hashPlay.close();
+}
+
 $.get("//itunes.apple.com/gb/rss/topsongs/limit=50/explicit=true/xml")
     .done(function (data) {
         var items = data.querySelectorAll("entry");
@@ -24,10 +30,11 @@ function clickedSONG(bgURL, spotifyURL) {
     })
         .done(function (data) {
             var item = data.querySelectorAll("track")[0].getAttribute('href');
+            history.pushState(item, "", item.split("spotify:track:").join("#"));
+            //window.location.assign("spotify:search:track:" + spotifyURL);
             location.href = item;
+            $(".chngBG").remove();
+            $('head').append("<style class='chngBG'>body\:\:before{ background-image\:url(" + bgURL + ")!important;}</style>");
 
         });
-    //location.href = spotifyURL;
-    $(".chngBG").remove();
-    $('head').append("<style class='chngBG'>body\:\:before{ background-image\:url(" + bgURL + ")!important;}</style>");
 }
