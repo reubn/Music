@@ -11,10 +11,18 @@
 <body>
 <div class="music">
 </div>
+<div class="onoffswitch midway-horizontal">
+    <input type="checkbox" name="toggle" class="onoffswitch-checkbox" id="myonoffswitch" onclick="toggleMode()" checked>
+    <label class="onoffswitch-label" for="myonoffswitch">
+        <div class="onoffswitch-inner"></div>
+        <div class="onoffswitch-switch"></div>
+    </label>
+</div>
 <audio class="player" autoplay>
     <source id="playersrc" />
 </audio>
 <script src="js/zepto.min.js"></script>
+<script src="js/midway.min.js"></script>
 <script type="text/javascript" src="js/script.js"></script>
 </body>
 </html>
