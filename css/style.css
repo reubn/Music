@@ -92,6 +92,7 @@ body {
     -webkit-user-select: none;
     -moz-user-select: none;
     -ms-user-select: none;
+    opacity: 0.9;
 }
 .onoffswitch-checkbox {
     display: none;

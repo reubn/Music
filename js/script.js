@@ -52,5 +52,5 @@
          audio[0].play();
      }
      $(".chngBG").remove();
-     $('head').append("<style class='chngBG'>body\:\:before{ background-image\:url(" + bgURL + ")!important;}</style>");
+     $('head').append("<style class='chngBG'>body::before{ background-image:url(" + bgURL + ")!important;}</style>");
  }
