@@ -19,7 +19,7 @@
  });
 
  function toggleMode() {
-     if ($('#myonoffswitch').checked) {
+     if ($('#myonoffswitch').is(":checked") === true) {
          iTunesOnly = true;
          console.log('true')
      } else {
