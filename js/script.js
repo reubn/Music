@@ -1,4 +1,13 @@
- var iTunesOnly = true;
+console.log(getCookie('iTunesOnly'));
+ if (getCookie('iTunesOnly') === 'false') {
+     var iTunesOnly = false;
+     console.log('iTc false');
+     $('#myonoffswitch').trigger('click');
+ } else {
+     var iTunesOnly = true;
+     console.log('iTc true');
+ }
+
  if (window.location.hash) {
      hashPlay = window.open(window.location.hash.split("#").join("spotify:track:"));
      hashPlay.close();
@@ -18,13 +27,33 @@
      }
  });
 
+ function setCookie(c_name, value, exdays) {
+     var exdate = new Date();
+     exdate.setDate(exdate.getDate() + exdays);
+     var c_value = escape(value) +
+         ((exdays == null) ? "" : ("; expires=" + exdate.toUTCString()));
+     document.cookie = c_name + "=" + c_value;
+ }
+
+ function getCookie(c_name) {
+     var i, x, y, ARRcookies = document.cookie.split(";");
+     for (i = 0; i < ARRcookies.length; i++) {
+         x = ARRcookies[i].substr(0, ARRcookies[i].indexOf("="));
+         y = ARRcookies[i].substr(ARRcookies[i].indexOf("=") + 1);
+         x = x.replace(/^\s+|\s+$/g, "");
+         if (x == c_name) {
+             return unescape(y);
+         }
+     }
+ }
+
  function toggleMode() {
      if ($('#myonoffswitch').is(":checked") === true) {
          iTunesOnly = true;
-         console.log('true')
+         setCookie('iTunesOnly', 'true', 100);
      } else {
          iTunesOnly = false;
-         console.log('false')
+         setCookie('iTunesOnly', 'false', 100);
      }
  }
 
