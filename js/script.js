@@ -1,3 +1,4 @@
+var audio = $(".player");
 if (getCookie('iTunesOnly') === 'false') {
     var iTunesOnly = false;
     $('#myonoffswitch').trigger('click');
@@ -57,11 +58,15 @@ function toggleMode() {
 function addslashes(a) {
     return (a + "").replace(/[\\"']/g, "\\$&").replace(/\u0000/g, "\\0");
 }
-
+function playiTunes(itunesURL){
+$("#playersrc").attr("src", itunesURL);
+        audio[0].pause();
+        audio[0].load();
+        audio[0].play();
+}
 function clickedSONG(bgURL, spotifyURL, itunesURL, artist) {
-    var art = artist
+    var art = artist;
     //console.log(art.trim().toLowerCase().split(" ")[0]);
-    var audio = $(".player");
     audio[0].pause();
     if (iTunesOnly === false) {
         $.get("//ws.spotify.com/search/1/track", {
@@ -84,15 +89,16 @@ function clickedSONG(bgURL, spotifyURL, itunesURL, artist) {
                     //console.log('False' + num);
                     found = false;
                 };
+                if(num == 20){
+                playiTunes(itunesURL);
+                    break;
+                }
             }
 
 
         });
     } else {
-        $("#playersrc").attr("src", itunesURL);
-        audio[0].pause();
-        audio[0].load();
-        audio[0].play();
+        playiTunes(itunesURL);
     }
     $(".chngBG").remove();
     $('head').append("<style class='chngBG'>body::before{ background-image:url(" + bgURL + ")!important;}</style>");
