@@ -1,18 +1,19 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <meta charset="UTF-8">
     <title>Music</title>
 <meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-<link href='http://fonts.googleapis.com/css?family=Open+Sans:400,300,700' rel='stylesheet' type='text/css'>
-<link href="css/style.css" rel="stylesheet" type="text/css">
+<link href='http://fonts.googleapis.com/css?family=Open+Sans:400,300,700' rel='stylesheet'>
+<link href="css/style.css" rel="stylesheet">
 </head>
 <body>
 <div class="music">
 </div>
 <div class="onoffswitch midway-horizontal">
-    <input type="checkbox" name="toggle" class="onoffswitch-checkbox" id="myonoffswitch" onclick="toggleMode()" checked>
+    <input type="checkbox" class="onoffswitch-checkbox" id="myonoffswitch" name="toggle" onclick="toggleMode()" checked>
     <label class="onoffswitch-label" for="myonoffswitch">
         <div class="onoffswitch-inner"></div>
         <div class="onoffswitch-switch"></div>
@@ -23,6 +24,6 @@
 </audio>
 <script src="js/zepto.min.js"></script>
 <script src="js/midway.min.js"></script>
-<script type="text/javascript" src="js/script.js"></script>
+<script src="js/script.js"></script>
 </body>
 </html>
