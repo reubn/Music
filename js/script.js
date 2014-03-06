@@ -58,12 +58,14 @@ function toggleMode() {
 function addslashes(a) {
     return (a + "").replace(/[\\"']/g, "\\$&").replace(/\u0000/g, "\\0");
 }
-function playiTunes(itunesURL){
-$("#playersrc").attr("src", itunesURL);
-        audio[0].pause();
-        audio[0].load();
-        audio[0].play();
+
+function playiTunes(itunesURL) {
+    $("#playersrc").attr("src", itunesURL);
+    audio[0].pause();
+    audio[0].load();
+    audio[0].play();
 }
+
 function clickedSONG(bgURL, spotifyURL, itunesURL, artist) {
     var art = artist;
     //console.log(art.trim().toLowerCase().split(" ")[0]);
@@ -74,7 +76,6 @@ function clickedSONG(bgURL, spotifyURL, itunesURL, artist) {
         }, function (data) {
             var num = 0;
             var found = false;
-
             while (found === false) {
                 //console.log(data.querySelectorAll("artist")[num].textContent.trim().toLowerCase().split(" ")[0]);
                 if (data.querySelectorAll("artist")[num].textContent.trim().toLowerCase().split(" ")[0] == art.trim().toLowerCase().split(" ")[0]) {
@@ -89,8 +90,8 @@ function clickedSONG(bgURL, spotifyURL, itunesURL, artist) {
                     //console.log('False' + num);
                     found = false;
                 };
-                if(num == 20){
-                playiTunes(itunesURL);
+                if (num == 20) {
+                    playiTunes(itunesURL);
                     break;
                 }
             }
