@@ -11,12 +11,12 @@ if (window.location.hash) {
 }
 
 $.get("//itunes.apple.com/gb/rss/topsongs/limit=50/explicit=true/xml", function (data) {
-    var items = data.querySelectorAll("entry");
+    var items = data.getElementsByTagName("entry");
 
     for (var n = 0; n < items.length; n++) {
         var title = items[n].querySelector("name").textContent.split(/ *\([^)]*\) */g).join("");
-        var thumbnail = items[n].querySelectorAll("image")[2].textContent;
-        var itunesURL = items[n].querySelectorAll('link')[1].getAttribute('href');
+        var thumbnail = items[n].getElementsByTagName("image")[2].textContent;
+        var itunesURL = items[n].getElementsByTagName('link')[1].getAttribute('href');
         var artist = items[n].querySelector('artist').textContent;
         var spotifyURL = encodeURIComponent(title);
         $('.music').append('<div class="song" onclick="clickedSONG(\'' + addslashes(thumbnail) + '\',\'' + addslashes(spotifyURL) + '\',\'' + addslashes(itunesURL) + '\')"><img class="art" src="' + addslashes(thumbnail) + '"><p>' + title + '</p><p>' + artist + '</p></div>');
