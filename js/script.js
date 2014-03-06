@@ -19,7 +19,7 @@ $.get("//itunes.apple.com/gb/rss/topsongs/limit=50/explicit=true/xml", function 
         var itunesURL = items[n].getElementsByTagName('link')[1].getAttribute('href');
         var artist = items[n].querySelector('artist').textContent;
         var spotifyURL = encodeURIComponent(title);
-        $('.music').append('<div class="song" onclick="clickedSONG(\'' + addslashes(thumbnail) + '\',\'' + addslashes(spotifyURL) + '\',\'' + addslashes(itunesURL) + '\')"><img class="art" src="' + addslashes(thumbnail) + '"><p>' + title + '</p><p>' + artist + '</p></div>');
+        $('.music').append('<div class="song" onclick="clickedSONG(\'' + addslashes(thumbnail) + '\',\'' + addslashes(spotifyURL) + '\',\'' + addslashes(itunesURL) + '\',\'' + artist + '\')"><img class="art" src="' + addslashes(thumbnail) + '"><p>' + title + '</p><p>' + artist + '</p></div>');
 
     }
 });
@@ -58,17 +58,34 @@ function addslashes(a) {
     return (a + "").replace(/[\\"']/g, "\\$&").replace(/\u0000/g, "\\0");
 }
 
-function clickedSONG(bgURL, spotifyURL, itunesURL) {
+function clickedSONG(bgURL, spotifyURL, itunesURL, artist) {
+    var art = artist
+    //console.log(art.trim().toLowerCase().split(" ")[0]);
     var audio = $(".player");
     audio[0].pause();
     if (iTunesOnly === false) {
         $.get("//ws.spotify.com/search/1/track", {
             "q": spotifyURL
         }, function (data) {
-            var item = data.querySelector("track").getAttribute('href');
-            history.pushState(item, "", item.split("spotify:track:").join("#"));
-            //window.location.assign("spotify:search:track:" + spotifyURL);
-            location.href = item;
+            var num = 0;
+            var found = false;
+
+            while (found === false) {
+                //console.log(data.querySelectorAll("artist")[num].textContent.trim().toLowerCase().split(" ")[0]);
+                if (data.querySelectorAll("artist")[num].textContent.trim().toLowerCase().split(" ")[0] == art.trim().toLowerCase().split(" ")[0]) {
+                    //console.log('True' + num);
+                    var url = data.querySelectorAll("track")[num].getAttribute('href');
+                    history.pushState(url, "", url.split("spotify:track:").join("#"));
+                    //window.location.assign("spotify:search:track:" + spotifyURL);
+                    location.href = url;
+                    found = true;
+                } else {
+                    num++;
+                    //console.log('False' + num);
+                    found = false;
+                };
+            }
+
 
         });
     } else {
