@@ -1,22 +1,46 @@
-var TMP;
 var iTunesOnly;
 var audio = $(".player");
-$.ajax({
-    type: 'GET',
-    dataType: 'script',
-    timeout: 1000,
-    url: 'https://wlunlyjfwn.spotilocal.com:4370/r',
-    error: function (jqXHR) {
-        if(jqXHR.status == '404'){
-        iTunesOnly = false;
-        }else{
-            iTunesOnly = true;
-        }
-        console.log('NG ' + jqXHR.status);
-        console.info(jqXHR);
+var isMobile = {
+    Android: function () {
+        return navigator.userAgent.match(/Android/i);
+    },
+    BlackBerry: function () {
+        return navigator.userAgent.match(/BlackBerry/i);
+    },
+    iOS: function () {
+        return navigator.userAgent.match(/iPhone|iPad|iPod/i);
+    },
+    Opera: function () {
+        return navigator.userAgent.match(/Opera Mini/i);
+    },
+    Windows: function () {
+        return navigator.userAgent.match(/IEMobile/i);
+    },
+    any: function () {
+        return (isMobile.Android() || isMobile.BlackBerry() || isMobile.iOS() || isMobile.Opera() || isMobile.Windows());
     }
-});
+};
+if (!isMobile.any()) {
+    $.ajax({
+        type: 'GET',
+        dataType: 'script',
+        timeout: 1000,
+        url: 'https://wlunlyjfwn.spotilocal.com:4370/r',
+        error: function (jqXHR) {
 
+            if (jqXHR.status == '404') {
+                iTunesOnly = false;
+            } else {
+                iTunesOnly = true;
+            }
+            console.log('NG ' + jqXHR.status);
+            console.info(jqXHR);
+        }
+
+    });
+} else{
+iTunesOnly = true;
+}
 if (window.location.hash) {
     hashPlay = window.open(window.location.hash.split("#").join("spotify:track:"));
     hashPlay.close();
