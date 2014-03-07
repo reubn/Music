@@ -1,17 +1,32 @@
+var TMP;
+var iTunesOnly;
 var audio = $(".player");
-if (getCookie('iTunesOnly') === 'false') {
-    var iTunesOnly = false;
-    $('#myonoffswitch').trigger('click');
-} else {
-    var iTunesOnly = true;
-}
+$.ajax({
+    type: 'GET',
+    dataType: 'jsonp',
+    jsonp: 'jsonp',
+    timeout: 300,
+    url: 'https://wlunlyjfwn.spotilocal.com:4370/r',
+    success: function (receivedData) {
+        iTunesOnly = false;
+        console.log('DG');
+    },
+    error: function (jqXHR) {
+        if(jqXHR.status == '404'){
+            console.log('NGOK ' + jqXHR.status);
+        iTunesOnly = false;
+        }else{
+            iTunesOnly = true;
+        }
+        console.log('NG ' + jqXHR.status);
+    }
+});
 
 if (window.location.hash) {
     hashPlay = window.open(window.location.hash.split("#").join("spotify:track:"));
     hashPlay.close();
 }
-
-$.get("//itunes.apple.com/gb/rss/topsongs/limit=50/explicit=true/xml", function (data) {
+$.get("http://itunes.apple.com/gb/rss/topsongs/limit=50/explicit=true/xml", function (data) {
     var items = data.getElementsByTagName("entry");
 
     for (var n = 0; n < items.length; n++) {
@@ -24,36 +39,6 @@ $.get("//itunes.apple.com/gb/rss/topsongs/limit=50/explicit=true/xml", function 
 
     }
 });
-
-function setCookie(c_name, value, exdays) {
-    var exdate = new Date();
-    exdate.setDate(exdate.getDate() + exdays);
-    var c_value = escape(value) +
-        ((exdays == null) ? "" : ("; expires=" + exdate.toUTCString()));
-    document.cookie = c_name + "=" + c_value;
-}
-
-function getCookie(c_name) {
-    var i, x, y, ARRcookies = document.cookie.split(";");
-    for (i = 0; i < ARRcookies.length; i++) {
-        x = ARRcookies[i].substr(0, ARRcookies[i].indexOf("="));
-        y = ARRcookies[i].substr(ARRcookies[i].indexOf("=") + 1);
-        x = x.replace(/^\s+|\s+$/g, "");
-        if (x == c_name) {
-            return unescape(y);
-        }
-    }
-}
-
-function toggleMode() {
-    if ($('#myonoffswitch').is(":checked") === true) {
-        iTunesOnly = true;
-        setCookie('iTunesOnly', 'true', 100);
-    } else {
-        iTunesOnly = false;
-        setCookie('iTunesOnly', 'false', 100);
-    }
-}
 
 function addslashes(a) {
     return (a + "").replace(/[\\"']/g, "\\$&").replace(/\u0000/g, "\\0");
