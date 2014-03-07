@@ -3,22 +3,17 @@ var iTunesOnly;
 var audio = $(".player");
 $.ajax({
     type: 'GET',
-    dataType: 'jsonp',
-    jsonp: 'jsonp',
-    timeout: 300,
+    dataType: 'script',
+    timeout: 1000,
     url: 'https://wlunlyjfwn.spotilocal.com:4370/r',
-    success: function (receivedData) {
-        iTunesOnly = false;
-        console.log('DG');
-    },
     error: function (jqXHR) {
         if(jqXHR.status == '404'){
-            console.log('NGOK ' + jqXHR.status);
         iTunesOnly = false;
         }else{
             iTunesOnly = true;
         }
         console.log('NG ' + jqXHR.status);
+        console.info(jqXHR);
     }
 });
 
