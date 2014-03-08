@@ -34,7 +34,7 @@ if (!isMobile.any()) {
             } else {
                 iTunesOnly = true;
             }
-            console.log('NG ' + jqXHR.status);
+            console.log('This ↑ ' + jqXHR.status + ' is checking if Spotify is installed ;\)');
             console.info(jqXHR);
         }
 
