@@ -1,3 +1,4 @@
+$('.songs').on('touchstart', function(event){});
 var iTunesOnly;
 var audio = $(".player");
 var isMobile = {
@@ -50,7 +51,7 @@ $.get("http://itunes.apple.com/gb/rss/topsongs/limit=50/explicit=true/xml", func
 
     for (var n = 0; n < items.length; n++) {
         var title = items[n].querySelector("name").textContent.split(/ *\([^)]*\) */g).join("");
-        var thumbnail = items[n].getElementsByTagName("image")[2].textContent;
+        var thumbnail = items[n].getElementsByTagName("image")[2].textContent.split("170x170").join("340x340");
         var itunesURL = items[n].getElementsByTagName('link')[1].getAttribute('href');
         var artist = items[n].querySelector('artist').textContent;
         var spotifyURL = encodeURIComponent(title);
