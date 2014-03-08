@@ -1,4 +1,4 @@
-$('.songs').on('touchstart', function(event){});
+$('.music').on('touchstart', function(event){});
 var iTunesOnly;
 var audio = $(".player");
 var isMobile = {

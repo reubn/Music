@@ -10,7 +10,6 @@ html {
     margin: 0;
 }
 body:before {
-    -webkit-transform: translate3d(0, 0, 0);
     content: "";
     position: absolute;
     top: -5%;
@@ -43,6 +42,7 @@ body {
     overflow-x: hidden;
     overflow-y: scroll;
     -webkit-overflow-scrolling: touch;
+    -webkit-transform: translate3d(0, 0, 0);
 }
 .song {
     float: left;
