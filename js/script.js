@@ -1,6 +1,7 @@
 //Smooth Scroll Hack
 $('.music').on('touchstart', function (event) {});
 //Song Links
+var hashPlay;
 if (window.location.hash) {
     $.ajax({
         type: 'GET',
@@ -12,7 +13,8 @@ if (window.location.hash) {
     }).done(function (data) {
         $('head').append("<style class='chngBG'>body::before{ background-image:url(" + data.thumbnail_url.split("cover").join("640") + ")!important;}</style>");
     });
-    window.open(window.location.hash.split("#").join("spotify:track:")).close();
+    hashPlay = window.open(window.location.hash.split("#").join("spotify:track:"));
+    
 }
 
 //Vars
@@ -62,7 +64,7 @@ if (!isMobile.t()) {
 }
 $.get("http://itunes.apple.com/gb/rss/topsongs/limit=50/explicit=true/xml", function (data) {
     var items = data.getElementsByTagName("entry");
-
+    hashPlay.close();
     for (var n = 0; n < items.length; n++) {
         var title = items[n].querySelector("name").textContent.split(/ *\[[^)]*\] *| *\([^)]*\) */g).join("");
         var artist = items[n].querySelector('artist').textContent;
