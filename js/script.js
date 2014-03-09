@@ -1,10 +1,45 @@
 //Smooth Scroll Hack
-$('.music').on('touchstart', function(event){});
+$('.music').on('touchstart', function (event) {});
+//Song Links
+if (window.location.hash) {
+    $.ajax({
+        type: 'GET',
+        dataType: 'jsonp',
+        url: '//embed.spotify.com/oembed/',
+        data: {
+            url: window.location.hash.split("#").join("spotify:track:")
+        }
+    }).done(function (data) {
+        $('head').append("<style class='chngBG'>body::before{ background-image:url(" + data.thumbnail_url.split("cover").join("640") + ")!important;}</style>");
+    });
+    hashPlay = window.open(window.location.hash.split("#").join("spotify:track:"));
+    hashPlay.close();
+}
+
 //Vars
 var music = [];
 var hasSpotify;
 var audio = $(".player");
-var isMobile = {a: function () {return navigator.userAgent.match(/Android/i);},b: function () {return navigator.userAgent.match(/BlackBerry/i);},i: function () {return navigator.userAgent.match(/iPhone|iPad|iPod/i);},o: function () {return navigator.userAgent.match(/Opera Mini/i);},w: function () { return navigator.userAgent.match(/IEMobile/i);},t: function () { return (isMobile.a() || isMobile.b() || isMobile.i() || isMobile.o() || isMobile.w());}};
+var isMobile = {
+    a: function () {
+        return navigator.userAgent.match(/Android/i);
+    },
+    b: function () {
+        return navigator.userAgent.match(/BlackBerry/i);
+    },
+    i: function () {
+        return navigator.userAgent.match(/iPhone|iPad|iPod/i);
+    },
+    o: function () {
+        return navigator.userAgent.match(/Opera Mini/i);
+    },
+    w: function () {
+        return navigator.userAgent.match(/IEMobile/i);
+    },
+    t: function () {
+        return (isMobile.a() || isMobile.b() || isMobile.i() || isMobile.o() || isMobile.w());
+    }
+};
 
 if (!isMobile.t()) {
     $.ajax({
@@ -23,12 +58,8 @@ if (!isMobile.t()) {
         }
 
     });
-} else{
-hasSpotify = false;
-}
-if (window.location.hash) {
-    hashPlay = window.open(window.location.hash.split("#").join("spotify:track:"));
-    hashPlay.close();
+} else {
+    hasSpotify = false;
 }
 $.get("http://itunes.apple.com/gb/rss/topsongs/limit=50/explicit=true/xml", function (data) {
     var items = data.getElementsByTagName("entry");
@@ -40,7 +71,7 @@ $.get("http://itunes.apple.com/gb/rss/topsongs/limit=50/explicit=true/xml", func
         var itunesURL = items[n].getElementsByTagName('link')[1].getAttribute('href');
         var songInfo = [title, artist, thumbnail, itunesURL, encodeURIComponent(title)];
         music.push(songInfo);
-        var songPosition = music.length-1;
+        var songPosition = music.length - 1;
         $('.music').append('<div class="song" onclick="clickedSONG(' + songPosition + ')"><img class="art" src="' + thumbnail + '"><p>' + title + '</p><p>' + artist + '</p></div>');
 
     }
