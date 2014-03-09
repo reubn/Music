@@ -12,8 +12,7 @@ if (window.location.hash) {
     }).done(function (data) {
         $('head').append("<style class='chngBG'>body::before{ background-image:url(" + data.thumbnail_url.split("cover").join("640") + ")!important;}</style>");
     });
-    hashPlay = window.open(window.location.hash.split("#").join("spotify:track:"));
-    hashPlay.close();
+    window.open(window.location.hash.split("#").join("spotify:track:")).close();
 }
 
 //Vars
