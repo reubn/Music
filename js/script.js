@@ -87,7 +87,7 @@ function playiTunes(itunesURL) {
 
 function clickedSONG(songPosition) {
     var song = music[songPosition];
-    var art = song[1];
+    var artist = song[1];
     //console.log(art.trim().toLowerCase().split(" ")[0]);
     audio[0].pause();
     if (hasSpotify === true) {
@@ -98,7 +98,7 @@ function clickedSONG(songPosition) {
             var found = false;
             while (found === false) {
                 //console.log(data.querySelectorAll("artist")[num].textContent.trim().toLowerCase().split(" ")[0]);
-                if (data.querySelectorAll("artist")[num].textContent.trim().toLowerCase().split(" ")[0] == art.trim().toLowerCase().split(" ")[0]) {
+                if (data.querySelectorAll("artist")[num].textContent.trim().toLowerCase().split(" ")[0] == artist.trim().toLowerCase().split(" ")[0]) {
                     //console.log('True ' + num);
                     var url = data.querySelectorAll("track")[num].getAttribute('href');
                     music[songPosition].push(url);
