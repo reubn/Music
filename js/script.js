@@ -14,7 +14,7 @@ if (window.location.hash) {
         $('head').append("<style class='chngBG'>body::before{ background-image:url(" + data.thumbnail_url.split("cover").join("640") + ")!important;}</style>");
     });
     hashPlay = window.open(window.location.hash.split("#").join("spotify:track:"));
-    
+    hashPlay.close();
 }
 
 //Vars
@@ -64,7 +64,7 @@ if (!isMobile.t()) {
 }
 $.get("http://itunes.apple.com/gb/rss/topsongs/limit=50/explicit=true/xml", function (data) {
     var items = data.getElementsByTagName("entry");
-    hashPlay.close();
+    
     for (var n = 0; n < items.length; n++) {
         var title = items[n].querySelector("name").textContent.split(/ *\[[^)]*\] *| *\([^)]*\) */g).join("");
         var artist = items[n].querySelector('artist').textContent;
