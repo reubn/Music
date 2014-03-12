@@ -20,7 +20,7 @@ if (window.location.hash) {
 //Vars
 var music = [];
 var hasSpotify;
-var audio = $(".player");
+var audio = $(".player")[0];
 var isMobile = {
     a: function () {
         return navigator.userAgent.match(/Android/i);
@@ -84,16 +84,16 @@ $.ajax({
 
     function playiTunes(itunesURL) {
         $("#playersrc").attr("src", itunesURL);
-        audio[0].pause();
-        audio[0].load();
-        audio[0].play();
+        audio.pause();
+        audio.load();
+        audio.play();
     }
 
     function clickedSONG(songPosition) {
         var song = music[songPosition];
         var artist = song[1];
         //console.log(art.trim().toLowerCase().replace(/ ")[0]);
-        audio[0].pause();
+        audio.pause();
         if (hasSpotify === true) {
             $.get("//ws.spotify.com/search/1/track.json", {
                 "q": song[4]
@@ -108,6 +108,7 @@ $.ajax({
                         history.pushState(url, "", url.replace(/spotify:track:/g, "#"));
                         location.href = url;
                         found = true;
+                        
                     } else {
                         num++;
                         //console.log('False ' + num);
