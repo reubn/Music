@@ -89,10 +89,9 @@ $.ajax({
         audio.play();
     }
 
-    function clickedSONG(songPosition) {
-        var song = music[songPosition];
+    function clickedSONG(sP) {
+        var song = music[sP];
         var artist = song[1];
-        //console.log(art.trim().toLowerCase().replace(/ ")[0]);
         audio.pause();
         if (hasSpotify === true) {
             $.get("//ws.spotify.com/search/1/track.json", {
