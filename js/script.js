@@ -103,7 +103,7 @@ $.ajax({
                     if (data.tracks[num].artists[0].name.trim().toLowerCase().split(" ")[0] == artist.trim().toLowerCase().split(" ")[0]) {
                         //console.log('True ' + num);
                         var url = data.tracks[num].href;
-                        music[songPosition].push(url);
+                        music[sP].push(url);
                         history.pushState(url, "", url.replace(/spotify:track:/g, "#"));
                         location.href = url;
                         found = true;
