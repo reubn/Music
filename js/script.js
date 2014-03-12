@@ -92,6 +92,7 @@ $.ajax({
     function clickedSONG(sP) {
         var song = music[sP];
         var artist = song[1];
+        window.document.title = "Music - " + song[0];
         audio.pause();
         if (hasSpotify === true) {
             $.get("//ws.spotify.com/search/1/track.json", {
