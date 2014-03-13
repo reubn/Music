@@ -76,7 +76,7 @@ $.ajax({
                 var itunesURL = items[n].link[1].attributes.href;
                 var songInfo = [title, artist, thumbnail, itunesURL, encodeURIComponent(title)];
                 music.push(songInfo);
-                $('.music').append('<div class="song" onclick="clickedSONG(' + (music.length-1) + ')"><img class="art" src="' + thumbnail + '"><p>' + title + '</p><p>' + artist + '</p></div>');
+                $('.music').append('<article class="song" onclick="clickedSONG(' + (music.length-1) + ')"><img class="art" src="' + thumbnail + '"><p>' + title + '</p><p>' + artist + '</p></article>');
 
             }
         }
