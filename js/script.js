@@ -55,7 +55,7 @@ if (!isMobile.t()) {
             } else {
                 hasSpotify = false;
             }
-            console.info('This ↑ ' + jqXHR.status + ' ↑ is checking if Spotify is installed ;\)');
+            console.info('This ↑ ' + jqXHR.status + ' ↑ is checking if Spotify is installed');
         }
 
     });
@@ -113,7 +113,7 @@ function clickedSONG(sP) {
                     num++;
                     //console.log('False ' + num);
                     found = false;
-                };
+                }
                 if (num == 20) {
                     playiTunes(song[3]);
                     break;
