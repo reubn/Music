@@ -92,7 +92,7 @@ function playiTunes(itunesURL) {
 function clickedSONG(sP) {
     var song = music[sP];
     var artist = song[1];
-    window.document.title = "Music - " + song[0];
+    window.document.title = song[0] + ' - ' + song[1];
     audio.pause();
     if (hasSpotify === true) {
         $.get("//ws.spotify.com/search/1/track.json", {
