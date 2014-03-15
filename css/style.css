@@ -14,7 +14,7 @@ body:before {
     position: absolute;
     top: -5%;
     left: -5%;
-    background-image: url('http://a634.phobos.apple.com/us/r30/Music6/v4/2c/42/26/2c42267b-2ff1-f712-9133-a68a8dba133c/825646347636.170x170-75.jpg');
+    background-image: url('http://a1.phobos.apple.com/us/r30/Music4/v4/88/28/d7/8828d7e1-c1ae-98f4-e3e6-57720648b38e/13UMGIM15044.450x450-75.jpg');
     background-size: cover;
     background-position: center;
     background-repeat: repeat-y;
@@ -42,7 +42,11 @@ body {
     overflow-x: hidden;
     overflow-y: scroll;
     -webkit-overflow-scrolling: touch;
+    -o-transform: translate3d(0, 0, 0);
+    -ms-transform: translate3d(0, 0, 0);
+    -moz-transform: translate3d(0, 0, 0);
     -webkit-transform: translate3d(0, 0, 0);
+    transform: translate3d(0, 0, 0);
 }
 .song {
     float: left;
@@ -53,6 +57,9 @@ body {
     width: 170px;
     height: 240px;
     overflow: hidden;
+    -o-transition: all 0.5s;
+    -ms-transition: all 0.5s;
+    -moz-transition: all 0.5s;
     -webkit-transition: all 0.5s;
     transition: all 0.5s;
     white-space: nowrap;
@@ -75,7 +82,7 @@ body {
     padding: 0;
     font-size: 1.5em;
     font-weight: 500;
-     white-space: inherit!important;
+    white-space: inherit!important;
 }
 .art {
     width: 170px;
