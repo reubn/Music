@@ -22,23 +22,8 @@ var music = [];
 var hasSpotify;
 var audio = $(".player")[0];
 var isMobile = {
-    a: function () {
-        return navigator.userAgent.match(/Android/i);
-    },
-    b: function () {
-        return navigator.userAgent.match(/BlackBerry/i);
-    },
-    i: function () {
-        return navigator.userAgent.match(/iPhone|iPad|iPod/i);
-    },
-    o: function () {
-        return navigator.userAgent.match(/Opera Mini/i);
-    },
-    w: function () {
-        return navigator.userAgent.match(/IEMobile/i);
-    },
-    t: function () {
-        return (isMobile.a() || isMobile.b() || isMobile.i() || isMobile.o() || isMobile.w());
+t: function () {
+        return (navigator.userAgent.match(/Android/i) || navigator.userAgent.match(/BlackBerry/i) || navigator.userAgent.match(/iPhone|iPad|iPod/i) || navigator.userAgent.match(/Opera Mini/i) || navigator.userAgent.match(/IEMobile/i));
     }
 };
 
