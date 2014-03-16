@@ -60,7 +60,12 @@ if (!isMobile.t()) {
 
     });
 } else {
-    hasSpotify = false;
+    if (confirm("Do you want to play via Spotify?")) {
+        hasSpotify = true;
+    } else {
+        hasSpotify = false;
+    }
+
 }
 $.ajax({
     type: 'GET',
