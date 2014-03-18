@@ -13,7 +13,7 @@ if (window.location.hash) {
     }).done(function (data) {
         $('head').append("<style class='chngBG'>body::before{ background-image:url(" + data.thumbnail_url.replace(/cover/g, "640") + ")!important;}</style>");
     });
-    window.frames['invisif'].document.location.href = window.location.hash.replace(/#/g, "spotify:track:");
+    openUrl(window.location.hash.replace(/#/g, "spotify:track:"));
 }
 
 //Vars
@@ -70,6 +70,9 @@ $.ajax({
         }
     }
 });
+function openUrl(url) {
+    window.frames['invisif'].document.location.href = url;
+}
 
 function playiTunes(itunesURL) {
     $("#playersrc").attr("src", itunesURL);
@@ -95,7 +98,7 @@ function clickedSONG(sP) {
                     var url = data.tracks[num].href;
                     music[sP].push(url);
                     history.pushState(url, "", url.replace(/spotify:track:/g, "#"));
-                    location.href = url;
+                    openUrl(url);
                     found = true;
 
                 } else {
