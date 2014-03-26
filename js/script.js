@@ -21,7 +21,7 @@ var music = [];
 var hasSpotify;
 var audio = $(".player")[0];
 var isMobile = {
-t: function () {
+    t: function () {
         return (navigator.userAgent.match(/Android/i) || navigator.userAgent.match(/BlackBerry/i) || navigator.userAgent.match(/iPhone|iPad|iPod/i) || navigator.userAgent.match(/Opera Mini/i) || navigator.userAgent.match(/IEMobile/i));
     }
 };
@@ -70,6 +70,7 @@ $.ajax({
         }
     }
 });
+
 function openUrl(url) {
     window.frames['invisif'].document.location.href = url;
 }
@@ -82,19 +83,24 @@ function playiTunes(itunesURL) {
 }
 
 function clickedSONG(sP) {
+    console.info("User clicked song");
     var song = music[sP];
     var artist = song[1];
     window.document.title = song[0] + ' - ' + song[1];
     audio.pause();
+    //IF HAS SPOTIFY
     if (hasSpotify === true) {
+        //TRY WITHOUT ARTIST NAME
+        console.info("User has Spotify");
         $.get("//ws.spotify.com/search/1/track.json", {
             "q": song[4]
         }, function (data) {
             var num = 0;
             var found = false;
             while (found === false) {
+                //IF ARTIST IS MATCH
                 if (data.tracks[num].artists[0].name.trim().toLowerCase().split(" ")[0] == artist.trim().toLowerCase().split(" ")[0]) {
-                    //console.log('True ' + num);
+                    console.info("Artist matches with only title");
                     var url = data.tracks[num].href;
                     music[sP].push(url);
                     history.pushState(url, "", url.replace(/spotify:track:/g, "#"));
@@ -102,13 +108,51 @@ function clickedSONG(sP) {
                     found = true;
 
                 } else {
+                    //IF ARTIST ISNT MATCH
+                    console.info("Artist doesnt match with only title");
                     num++;
                     //console.log('False ' + num);
                     found = false;
                 }
+                // IF TRIED 20 TIMES
                 if (num == 20) {
-                    playiTunes(song[3]);
+                    console.info("Tried with only title 20 times with no matches");
+                    //TRY WITH ARTIST NAME
+                    $.get("//ws.spotify.com/search/1/track.json", {
+                        "q": song[4] + " " + artist
+                    }, function (data) {
+                        var num = 0;
+                        var found = false;
+                        while (found === false) {
+                            if (data.tracks[num].artists[0].name.trim().toLowerCase().split(" ")[0] == artist.trim().toLowerCase().split(" ")[0]) {
+                                console.info("Artist matches with title and artist");
+                                //console.log('True ' + num);
+                                var url = data.tracks[num].href;
+                                music[sP].push(url);
+                                history.pushState(url, "", url.replace(/spotify:track:/g, "#"));
+                                openUrl(url);
+                                found = true;
+                                break;
+                            //IF ARTIST ISNT MATCH WITH ARTIST IN QUERY
+                            } else {
+                                console.info("Artist doesnt match with title and artist");
+                                num++;
+                                //console.log('False ' + num);
+                                found = false;
+                            }
+                            //IF WITH ARTIST IN QUERY TRIED 20 TIMES
+                            if (num == 20) {
+                                console.info("Tried with title and artist 20 times with no matches");
+                                playiTunes(song[3]);
+                                break;
+                            }
+                        }
+
+                    });
+                    //playiTunes(song[3]);
                     break;
+
+
                 }
             }
 
