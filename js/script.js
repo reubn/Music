@@ -1,7 +1,48 @@
 //Smooth Scroll Hack
 $('.music').on('touchstart', function (event) {});
+
+//Vars
+var music = [];
+var hasSpotify;
+var audio = $(".player")[0];
+var currentSongID = false;
+var isMobile = {
+    t: function () {
+        return (navigator.userAgent.match(/Android/i) || navigator.userAgent.match(/BlackBerry/i) || navigator.userAgent.match(/iPhone|iPad|iPod/i) || navigator.userAgent.match(/Opera Mini/i) || navigator.userAgent.match(/IEMobile/i));
+    }
+};
+
+//Key Controls
+
+$(window).keypress(function (e) {
+    if (e.which == 113 || e.which == 81) {
+        if (currentSongID !== false) {
+            clickedSONG(currentSongID - 1);
+        }
+    }
+});
+$(window).keypress(function (e) {
+    if (e.which == 101 || e.which == 69) {
+        if (currentSongID !== false) {
+            clickedSONG(currentSongID + 1);
+        }
+    }
+});
+
+
+//Basic Functions
+function playSong(url, mode) {
+    if (mode === 1) {
+        window.frames['invisif'].document.location.href = url;
+    } else if (mode === 0) {
+        $("#playersrc").attr("src", url);
+        audio.pause();
+        audio.load();
+        audio.play();
+    }
+}
+
 //Song Links
-var hashPlay;
 if (window.location.hash) {
     $.ajax({
         type: 'GET',
@@ -13,19 +54,10 @@ if (window.location.hash) {
     }).done(function (data) {
         $('head').append("<style class='chngBG'>body::before{ background-image:url(" + data.thumbnail_url.replace(/cover/g, "640") + ")!important;}</style>");
     });
-    openUrl(window.location.hash.replace(/#/g, "spotify:track:"));
+    playSong(window.location.hash.replace(/#/g, "spotify:track:"), 1);
 }
 
-//Vars
-var music = [];
-var hasSpotify;
-var audio = $(".player")[0];
-var isMobile = {
-    t: function () {
-        return (navigator.userAgent.match(/Android/i) || navigator.userAgent.match(/BlackBerry/i) || navigator.userAgent.match(/iPhone|iPad|iPod/i) || navigator.userAgent.match(/Opera Mini/i) || navigator.userAgent.match(/IEMobile/i));
-    }
-};
-
+//Detect If Spotify Is Installed
 if (!isMobile.t()) {
     $.ajax({
         type: 'GET',
@@ -51,6 +83,8 @@ if (!isMobile.t()) {
     }
 
 }
+
+//Get basic iTunes Feed
 $.ajax({
     type: 'GET',
     url: "http://itunes.apple.com/gb/rss/topsongs/limit=50/explicit=true/json",
@@ -62,29 +96,31 @@ $.ajax({
             var title = items[n]['im:name'].label.replace(/ *\[[^)]*\] *| *\([^)]*\) */g, "");
             var artist = items[n]['im:artist'].label;
             var thumbnail = items[n]['im:image'][2].label.replace(/170x170/g, "340x340");
-            var itunesURL = items[n].link[1].attributes.href;
+            if (items[n].link[1]) {
+                var itunesURL = items[n].link[1].attributes.href;
+            } else {
+                var itunesURL = false;
+            }
             var songInfo = [title, artist, thumbnail, itunesURL, encodeURIComponent(title)];
             music.push(songInfo);
-            $('.music').append('<article class="song" onclick="clickedSONG(' + (music.length - 1) + ')"><img class="art" src="' + thumbnail + '"><p>' + title + '</p><p>' + artist + '</p></article>');
+            var songElement = $('<article class="song"><img class="art" src="' + thumbnail + '"><p>' + title + '</p><p>' + artist + '</p></article>').click(clickedSONG);
+            $('.music').append(songElement);
 
         }
     }
 });
 
-function openUrl(url) {
-    window.frames['invisif'].document.location.href = url;
-}
-
-function playiTunes(itunesURL) {
-    $("#playersrc").attr("src", itunesURL);
-    audio.pause();
-    audio.load();
-    audio.play();
-}
-
-function clickedSONG(sP) {
+// Play Song Handler
+function clickedSONG(songPos) {
+    if (!isNaN(songPos)) {
+        var songPosition = songPos;
+        currentSongID = songPos;
+    } else {
+        var songPosition = $(this).index();
+        currentSongID = $(this).index();
+    }
     console.info("User clicked song");
-    var song = music[sP];
+    var song = music[songPosition];
     var artist = song[1];
     window.document.title = song[0] + ' - ' + song[1];
     audio.pause();
@@ -102,9 +138,9 @@ function clickedSONG(sP) {
                 if (data.tracks[num].artists[0].name.trim().toLowerCase().split(" ")[0] == artist.trim().toLowerCase().split(" ")[0]) {
                     console.info("Artist matches with only title");
                     var url = data.tracks[num].href;
-                    music[sP].push(url);
+                    music[songPosition].push(url);
                     history.pushState(url, "", url.replace(/spotify:track:/g, "#"));
-                    openUrl(url);
+                    playSong(url, 1);
                     found = true;
 
                 } else {
@@ -124,32 +160,41 @@ function clickedSONG(sP) {
                         var num = 0;
                         var found = false;
                         while (found === false) {
-                            if (data.tracks[num].artists[0].name.trim().toLowerCase().split(" ")[0] == artist.trim().toLowerCase().split(" ")[0]) {
+                            console.log(data.tracks);
+                            if (data.tracks[num]) {
+                                var trackItem = num
+                            } else {
+                                var trackItem = 0
+                            }
+                            if (data.tracks[trackItem].artists[0].name.trim().toLowerCase().indexOf(artist.trim().toLowerCase().split(" ")[0]) == -1) {
+                                var artistNumber = 1
+                            } else {
+                                var artistNumber = 0
+                            }
+                            if (data.tracks[trackItem].artists[artistNumber].name.trim().toLowerCase().indexOf(artist.trim().toLowerCase().split(" ")[0]) != -1) {
                                 console.info("Artist matches with title and artist");
                                 //console.log('True ' + num);
-                                var url = data.tracks[num].href;
-                                music[sP].push(url);
+                                var url = data.tracks[trackItem].href;
+                                music[songPosition].push(url);
                                 history.pushState(url, "", url.replace(/spotify:track:/g, "#"));
-                                openUrl(url);
+                                playSong(url, 1);
                                 found = true;
                                 break;
-                            //IF ARTIST ISNT MATCH WITH ARTIST IN QUERY
+                                //IF ARTIST ISNT MATCH WITH ARTIST IN QUERY
                             } else {
                                 console.info("Artist doesnt match with title and artist");
                                 num++;
-                                //console.log('False ' + num);
                                 found = false;
                             }
                             //IF WITH ARTIST IN QUERY TRIED 20 TIMES
                             if (num == 20) {
                                 console.info("Tried with title and artist 20 times with no matches");
-                                playiTunes(song[3]);
+                                playSong(song[3], 0);
                                 break;
                             }
                         }
 
                     });
-                    //playiTunes(song[3]);
                     break;
 
 
@@ -159,7 +204,7 @@ function clickedSONG(sP) {
 
         });
     } else {
-        playiTunes(song[3]);
+        playSong(song[3], 0);
     }
     $(".chngBG").remove();
     $('head').append("<style class='chngBG'>body::before{ background-image:url(" + song[2] + ")!important;}</style>");
