@@ -6,6 +6,7 @@ var music = [];
 var hasSpotify;
 var audio = $(".player")[0];
 var currentSongID = false;
+var countryCode;
 var isMobile = {
     t: function () {
         return (navigator.userAgent.match(/Android/i) || navigator.userAgent.match(/BlackBerry/i) || navigator.userAgent.match(/iPhone|iPad|iPod/i) || navigator.userAgent.match(/Opera Mini/i) || navigator.userAgent.match(/IEMobile/i));
@@ -13,16 +14,13 @@ var isMobile = {
 };
 
 //Key Controls
-
 $(window).keypress(function (e) {
-    if (e.which == 113 || e.which == 81) {
+    if (e.which == 113) {
         if (currentSongID !== false) {
             clickedSONG(currentSongID - 1);
         }
     }
-});
-$(window).keypress(function (e) {
-    if (e.which == 101 || e.which == 69) {
+    if (e.which == 101) {
         if (currentSongID !== false) {
             clickedSONG(currentSongID + 1);
         }
@@ -83,33 +81,36 @@ if (!isMobile.t()) {
     }
 
 }
+//Get Country Code
+$.getJSON('http://freegeoip.net/json/', function (data) {
+    countryCode = data.country_code;
+    //Get basic iTunes Feed
+    console.log();
+    $.ajax({
+        type: 'GET',
+        url: "http://itunes.apple.com/" + countryCode + "/rss/topsongs/limit=50/explicit=true/json",
+        dataType: 'json',
+        success: function (data) {
+            var items = data.feed.entry;
 
-//Get basic iTunes Feed
-$.ajax({
-    type: 'GET',
-    url: "http://itunes.apple.com/gb/rss/topsongs/limit=50/explicit=true/json",
-    dataType: 'json',
-    success: function (data) {
-        var items = data.feed.entry;
+            for (var n = 0; n < items.length; n++) {
+                var title = items[n]['im:name'].label.replace(/ *\[[^)]*\] *| *\([^)]*\) */g, "");
+                var artist = items[n]['im:artist'].label;
+                var thumbnail = items[n]['im:image'][2].label.replace(/170x170/g, "340x340");
+                if (items[n].link[1]) {
+                    var itunesURL = items[n].link[1].attributes.href;
+                } else {
+                    var itunesURL = false;
+                }
+                var songInfo = [title, artist, thumbnail, itunesURL, encodeURIComponent(title)];
+                music.push(songInfo);
+                var songElement = $('<article class="song"><img class="art" src="' + thumbnail + '"><p>' + title + '</p><p>' + artist + '</p></article>').click(clickedSONG);
+                $('.music').append(songElement);
 
-        for (var n = 0; n < items.length; n++) {
-            var title = items[n]['im:name'].label.replace(/ *\[[^)]*\] *| *\([^)]*\) */g, "");
-            var artist = items[n]['im:artist'].label;
-            var thumbnail = items[n]['im:image'][2].label.replace(/170x170/g, "340x340");
-            if (items[n].link[1]) {
-                var itunesURL = items[n].link[1].attributes.href;
-            } else {
-                var itunesURL = false;
             }
-            var songInfo = [title, artist, thumbnail, itunesURL, encodeURIComponent(title)];
-            music.push(songInfo);
-            var songElement = $('<article class="song"><img class="art" src="' + thumbnail + '"><p>' + title + '</p><p>' + artist + '</p></article>').click(clickedSONG);
-            $('.music').append(songElement);
-
         }
-    }
+    });
 });
-
 // Play Song Handler
 function clickedSONG(songPos) {
     if (!isNaN(songPos)) {
