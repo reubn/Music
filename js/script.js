@@ -121,7 +121,23 @@ $.getJSON('http://freegeoip.net/json/', function (data) {
                 }
                 var songInfo = [title, artist, thumbnail, itunesURL, encodeURIComponent(title)];
                 music.push(songInfo);
-                $('.music').append($('<article class="song"><img class="art" src="' + thumbnail + '"><p>' + title + '</p><p>' + artist + '</p></article>').click(clickedSONG));
+                var image = $('<img class="art" src="' + thumbnail + '">')
+                //For Future Fav Feature
+                /*var image = $('<img class="art" src="' + thumbnail + '">').hover(function () {
+                    $(this).css("background-image", "url(" + $(this).attr("src") + ")");
+                    $(this).attr("src", "data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4KPHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPgo8cGF0aCBvcGFjaXR5PSIwLjc1IiBmaWxsPSIjMjMyMzIzIiBkPSJNMCwwdjE3MGgxNzBWMEgweiBNMTI5LjQ2NCw3OS4wOTJsLTI0LjMzNywxNy42ODZsOS4zMzUsMjguNzEzCgljMS43LDUuMjMxLTAuNTUsNi44NjYtNSwzLjYzNWwtMjQuNDM1LTE3Ljc0bC0yNC40MDUsMTcuNzM2Yy00LjQ0OSwzLjIzMy02LjY5OCwxLjU5OS00Ljk5OC0zLjYzMWw5LjMyNS0yOC42ODJsLTI0LjQxLTE3LjcyMQoJYy00LjQ1MS0zLjIzMS0zLjU5Mi01Ljg3NSwxLjkwOC01Ljg3NUg3Mi42Mmw5LjMzMS0yOC43MDJjMS43LTUuMjMxLDQuNDgzLTUuMjMxLDYuMTg0LDBsOS4zMzEsMjguNzAyaDMwLjA4NwoJQzEzMy4wNTMsNzMuMjEzLDEzMy45MTMsNzUuODU4LDEyOS40NjQsNzkuMDkyeiIvPgo8L3N2Zz4=");
+                    var thisElement = $(this);
+                    var timer = setInterval(function () {
+                        if (thisElement.is(":hover")) {
+                            thisElement.attr("src", "data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4KPHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciCgkgd2lkdGg9IjE3MHB4IiBoZWlnaHQ9IjE3MHB4Ij4KPHBhdGggb3BhY2l0eT0iMC44NSIgZmlsbD0iI0ZGRUUxRCIgZD0iTTQwLjUzOSw3OS4wODhjLTQuNDUxLTMuMjMxLTMuNTkyLTUuODc1LDEuOTA4LTUuODc1aDg1LjEwNmM1LjUsMCw2LjM2LDIuNjQ1LDEuOTExLDUuODc5CglsLTY4Ljg0Miw1MC4wM2MtNC40NDksMy4yMzMtNi42OTgsMS41OTktNC45OTgtMy42MzFsMjYuMzI3LTgwLjk4YzEuNy01LjIzMSw0LjQ4My01LjIzMSw2LjE4NCwwbDI2LjMyNyw4MC45OAoJYzEuNyw1LjIzMS0wLjU1LDYuODY2LTUsMy42MzVMNDAuNTM5LDc5LjA4OHoiLz4KPC9zdmc+")
+                        }
+                        clearInterval(timer);
+                    }, 1000)
+                }, function () {
+                    $(this).attr("src", $(this).css("background-image").replace("url(", "").replace(")", ""));
+                    $(this).css("background-image", "");
+                });//*/
+                $('.music').append($('<article class="song"><p>' + title + '</p><p>' + artist + '</p></article>').prepend(image).click(clickedSONG));
 
             }
         }
