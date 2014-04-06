@@ -31,7 +31,7 @@ $(window).keypress(function (e) {
 //Basic Functions
 function playSong(url, mode) {
     if (mode === 1) {
-        window.frames['invisif'].document.location.href = url;
+        window.frames.invisif.document.location.href = url;
     } else if (mode === 0) {
         $("#playersrc").attr("src", url);
         audio.pause();
@@ -63,16 +63,31 @@ if (!isMobile.t()) {
         timeout: 1000,
         url: 'https://wlunlyjfwn.spotilocal.com:4370/r',
         error: function (jqXHR) {
-
             if (jqXHR.status == '404') {
                 hasSpotify = true;
             } else {
-                hasSpotify = false;
+                $.ajax({
+                    type: 'GET',
+                    dataType: 'script',
+                    timeout: 1000,
+                    url: 'https://wlunlyjfwn.spotilocal.com:4371/r',
+                    error: function (jqXHR) {
+
+                        if (jqXHR.status == '404') {
+                            hasSpotify = true;
+                        } else {
+                            hasSpotify = false;
+                        }
+                        console.info('This ↑ ' + jqXHR.status + ' ↑ is checking if Spotify is installed');
+                    }
+
+                });
             }
             console.info('This ↑ ' + jqXHR.status + ' ↑ is checking if Spotify is installed');
         }
 
     });
+
 } else {
     if (confirm("Do you want to play via Spotify?")) {
         hasSpotify = true;
@@ -84,6 +99,7 @@ if (!isMobile.t()) {
 //Get Country Code
 $.getJSON('http://freegeoip.net/json/', function (data) {
     countryCode = data.country_code;
+
     //Get basic iTunes Feed
     console.log();
     $.ajax({
@@ -97,15 +113,15 @@ $.getJSON('http://freegeoip.net/json/', function (data) {
                 var title = items[n]['im:name'].label.replace(/ *\[[^)]*\] *| *\([^)]*\) */g, "");
                 var artist = items[n]['im:artist'].label;
                 var thumbnail = items[n]['im:image'][2].label.replace(/170x170/g, "340x340");
+                var itunesURL;
                 if (items[n].link[1]) {
-                    var itunesURL = items[n].link[1].attributes.href;
+                    itunesURL = items[n].link[1].attributes.href;
                 } else {
-                    var itunesURL = false;
+                    itunesURL = false;
                 }
                 var songInfo = [title, artist, thumbnail, itunesURL, encodeURIComponent(title)];
                 music.push(songInfo);
-                var songElement = $('<article class="song"><img class="art" src="' + thumbnail + '"><p>' + title + '</p><p>' + artist + '</p></article>').click(clickedSONG);
-                $('.music').append(songElement);
+                $('.music').append($('<article class="song"><img class="art" src="' + thumbnail + '"><p>' + title + '</p><p>' + artist + '</p></article>').click(clickedSONG));
 
             }
         }
@@ -113,11 +129,12 @@ $.getJSON('http://freegeoip.net/json/', function (data) {
 });
 // Play Song Handler
 function clickedSONG(songPos) {
+    var songPosition;
     if (!isNaN(songPos)) {
-        var songPosition = songPos;
+        songPosition = songPos;
         currentSongID = songPos;
     } else {
-        var songPosition = $(this).index();
+        songPosition = $(this).index();
         currentSongID = $(this).index();
     }
     console.info("User clicked song");
@@ -136,7 +153,11 @@ function clickedSONG(songPos) {
             var found = false;
             while (found === false) {
                 //IF ARTIST IS MATCH
-                if (data.tracks[num].artists[0].name.trim().toLowerCase().split(" ")[0] == artist.trim().toLowerCase().split(" ")[0]) {
+                var artistString;
+                for (var key in data.tracks[num].artists) {
+                    artistString = artistString + " " + data.tracks[num].artists[key].name.trim().toLowerCase();
+                }
+                if (artistString.indexOf(artist.trim().toLowerCase().split(" ")[0]) != -1) {
                     console.info("Artist matches with only title");
                     var url = data.tracks[num].href;
                     music[songPosition].push(url);
@@ -161,18 +182,16 @@ function clickedSONG(songPos) {
                         var num = 0;
                         var found = false;
                         while (found === false) {
-                            console.log(data.tracks);
                             if (data.tracks[num]) {
-                                var trackItem = num
+                                var trackItem = num;
                             } else {
-                                var trackItem = 0
+                                var trackItem = 0;
                             }
-                            if (data.tracks[trackItem].artists[0].name.trim().toLowerCase().indexOf(artist.trim().toLowerCase().split(" ")[0]) == -1) {
-                                var artistNumber = 1
-                            } else {
-                                var artistNumber = 0
+                            var artistString;
+                            for (var key in data.tracks[trackItem].artists) {
+                                artistString = artistString + " " + data.tracks[trackItem].artists[key].name.trim().toLowerCase();
                             }
-                            if (data.tracks[trackItem].artists[artistNumber].name.trim().toLowerCase().indexOf(artist.trim().toLowerCase().split(" ")[0]) != -1) {
+                            if (artistString.indexOf(artist.trim().toLowerCase().split(" ")[0]) != -1) {
                                 console.info("Artist matches with title and artist");
                                 //console.log('True ' + num);
                                 var url = data.tracks[trackItem].href;
