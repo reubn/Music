@@ -7,6 +7,7 @@ var hasSpotify;
 var audio = $(".player")[0];
 var currentSongID = false;
 var countryCode;
+var nextSongTimer = false;
 var isMobile = {
     t: function () {
         return (navigator.userAgent.match(/Android/i) || navigator.userAgent.match(/BlackBerry/i) || navigator.userAgent.match(/iPhone|iPad|iPod/i) || navigator.userAgent.match(/Opera Mini/i) || navigator.userAgent.match(/IEMobile/i));
@@ -32,6 +33,14 @@ $(window).keypress(function (e) {
 function playSong(url, mode) {
     if (mode === 1) {
         window.frames.invisif.document.location.href = url;
+        if (nextSongTimer !== false) {
+            clearInterval(nextSongTimer);
+
+            nextSongTimer = setInterval(function () {
+                clickedSong(currentSongID + 1);
+                clearInterval(nextSongTimer);
+            }, music[currentSongID][6] * 1000);
+        }
     } else if (mode === 0) {
         $("#playersrc").attr("src", url);
         audio.pause();
@@ -192,6 +201,7 @@ function clickedSong(songPos) {
                     console.info("Artist matches with only title");
                     var url = data.tracks[num].href;
                     music[songPosition].push(url);
+                    music[songPosition].push(data.tracks[num].length);
                     history.pushState(url, "", url.replace(/spotify:track:/g, "#"));
                     playSong(url, 1);
                     found = true;
@@ -222,6 +232,7 @@ function clickedSong(songPos) {
                                 //console.log('True ' + num);
                                 var url = data.tracks[num].href;
                                 music[songPosition].push(url);
+                                music[songPosition].push(data.tracks[num].length);
                                 history.pushState(url, "", url.replace(/spotify:track:/g, "#"));
                                 playSong(url, 1);
                                 found = true;
