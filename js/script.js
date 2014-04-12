@@ -17,12 +17,12 @@ var isMobile = {
 $(window).keypress(function (e) {
     if (e.which == 113) {
         if (currentSongID !== false) {
-            clickedSONG(currentSongID - 1);
+            clickedSong(currentSongID - 1);
         }
     }
     if (e.which == 101) {
         if (currentSongID !== false) {
-            clickedSONG(currentSongID + 1);
+            clickedSong(currentSongID + 1);
         }
     }
 });
@@ -137,23 +137,38 @@ $.getJSON('http://freegeoip.net/json/', function (data) {
                     $(this).attr("src", $(this).css("background-image").replace("url(", "").replace(")", ""));
                     $(this).css("background-image", "");
                 });//*/
-                $('.music').append($('<article class="song"><p>' + title + '</p><p>' + artist + '</p></article>').prepend(image).click(clickedSONG));
+                $('.music').append($('<article class="song"><p>' + title + '</p><p>' + artist + '</p></article>').prepend(image).click(clickedSong));
 
             }
         }
     });
 });
+// Fun debug suffix func
+function numSuffix(num) {
+    if (num > 3 && num < 21) // catch teens, which are all 'th'
+        sufx = num + 'th';
+    else if (num % 10 == 1) // exceptions ending in '1'
+        sufx = num + 'st';
+    else if (num % 10 == 2) // exceptions ending in '2'
+        sufx = num + 'nd';
+    else if (num % 10 == 3) // exceptions ending in '3'
+        sufx = num + 'rd';
+    else
+        sufx = num + 'th';
+
+    return sufx
+}
 // Play Song Handler
-function clickedSONG(songPos) {
+function clickedSong(songPos) {
     var songPosition;
     if (!isNaN(songPos)) {
         songPosition = songPos;
         currentSongID = songPos;
     } else {
-        songPosition = $(this).index();
-        currentSongID = $(this).index();
+        songPosition = $(this).index() - 1;
+        currentSongID = $(this).index() - 1;
     }
-    console.info("User clicked song");
+    console.info("User clicked song " + songPosition + " (" + numSuffix(songPosition + 1) + ")");
     var song = music[songPosition];
     var artist = song[1];
     window.document.title = song[0] + ' - ' + song[1];
@@ -198,19 +213,14 @@ function clickedSONG(songPos) {
                         var num = 0;
                         var found = false;
                         while (found === false) {
-                            if (data.tracks[num]) {
-                                var trackItem = num;
-                            } else {
-                                var trackItem = 0;
-                            }
                             var artistString;
-                            for (var key in data.tracks[trackItem].artists) {
-                                artistString = artistString + " " + data.tracks[trackItem].artists[key].name.trim().toLowerCase();
+                            for (var key in data.tracks[num].artists) {
+                                artistString = artistString + " " + data.tracks[num].artists[key].name.trim().toLowerCase();
                             }
                             if (artistString.indexOf(artist.trim().toLowerCase().split(" ")[0]) != -1) {
                                 console.info("Artist matches with title and artist");
                                 //console.log('True ' + num);
-                                var url = data.tracks[trackItem].href;
+                                var url = data.tracks[num].href;
                                 music[songPosition].push(url);
                                 history.pushState(url, "", url.replace(/spotify:track:/g, "#"));
                                 playSong(url, 1);
