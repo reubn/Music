@@ -35,9 +35,12 @@ function playSong(url, mode) {
         window.frames.invisif.document.location.href = url;
         if (nextSongTimer !== false) {
             clearInterval(nextSongTimer);
-
             nextSongTimer = setInterval(function () {
+                if(currentSongID + 1){
                 clickedSong(currentSongID + 1);
+                }else{
+                clickedSong(0);
+                }
                 clearInterval(nextSongTimer);
             }, music[currentSongID][6] * 1000);
         }
