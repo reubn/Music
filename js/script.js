@@ -35,6 +35,7 @@ function playSong(url, mode) {
         window.frames.invisif.document.location.href = url;
         if (nextSongTimer !== false) {
             clearInterval(nextSongTimer);
+        }
             nextSongTimer = setInterval(function () {
                 if(currentSongID + 1){
                 clickedSong(currentSongID + 1);
@@ -43,7 +44,7 @@ function playSong(url, mode) {
                 }
                 clearInterval(nextSongTimer);
             }, music[currentSongID][6] * 1000);
-        }
+        
     } else if (mode === 0) {
         $("#playersrc").attr("src", url);
         audio.pause();

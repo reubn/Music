@@ -15,6 +15,7 @@ body:before {
     top: -5%;
     left: -5%;
     background-image: url('http://a1.phobos.apple.com/us/r30/Music4/v4/88/28/d7/8828d7e1-c1ae-98f4-e3e6-57720648b38e/13UMGIM15044.450x450-75.jpg');
+    -webkit-background-size: cover;
     background-size: cover;
     background-position: center;
     background-repeat: repeat-y;
@@ -42,16 +43,30 @@ body {
     overflow-x: hidden;
     overflow-y: scroll;
     -webkit-overflow-scrolling: touch;
-    -o-transform: translate3d(0, 0, 0);
     -ms-transform: translate3d(0, 0, 0);
-    -moz-transform: translate3d(0, 0, 0);
     -webkit-transform: translate3d(0, 0, 0);
     transform: translate3d(0, 0, 0);
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: -ms-flexbox;
     display: flex;
+    -webkit-box-orient: horizontal;
+    -webkit-box-direction: normal;
+    -webkit-flex-direction: row;
+    -ms-flex-direction: row;
     flex-direction: row;
+    -webkit-flex-wrap: wrap;
+    -ms-flex-wrap: wrap;
     flex-wrap: wrap;
+    -webkit-box-pack: center;
+    -webkit-justify-content: center;
+    -ms-flex-pack: center;
     justify-content: center;
+    -webkit-align-self: flex-start;
+    -ms-flex-item-align: start;
     align-self: flex-start;
+    -webkit-align-content: space-between;
+    -ms-flex-line-pack: justify;
     align-content: space-between;
 }
 .song {
@@ -63,9 +78,6 @@ body {
     width: 170px;
     height: 240px;
     overflow: hidden;
-    -o-transition: all 0.5s;
-    -ms-transition: all 0.5s;
-    -moz-transition: all 0.5s;
     -webkit-transition: all 0.5s;
     transition: all 0.5s;
     white-space: nowrap;
@@ -94,6 +106,7 @@ body {
     width: 170px;
     height: 170px;
     border-radius: 2%;
+    -webkit-background-size: cover;
     background-size: cover;
 }
 .player {
