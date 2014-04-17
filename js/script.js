@@ -6,52 +6,13 @@ var music = [];
 var hasSpotify;
 var audio = $(".player")[0];
 var currentSongID = false;
-var countryCode;
+var countryCode = "";
 var nextSongTimer = false;
 var isMobile = {
     t: function () {
         return (navigator.userAgent.match(/Android/i) || navigator.userAgent.match(/BlackBerry/i) || navigator.userAgent.match(/iPhone|iPad|iPod/i) || navigator.userAgent.match(/Opera Mini/i) || navigator.userAgent.match(/IEMobile/i));
     }
 };
-
-//Key Controls
-$(window).keypress(function (e) {
-    if (e.which == 113) {
-        if (currentSongID !== false) {
-            clickedSong(currentSongID - 1);
-        }
-    }
-    if (e.which == 101) {
-        if (currentSongID !== false) {
-            clickedSong(currentSongID + 1);
-        }
-    }
-});
-
-
-//Basic Functions
-function playSong(url, mode) {
-    if (mode === 1) {
-        window.frames.invisif.document.location.href = url;
-        if (nextSongTimer !== false) {
-            clearInterval(nextSongTimer);
-        }
-            nextSongTimer = setInterval(function () {
-                if(currentSongID + 1){
-                clickedSong(currentSongID + 1);
-                }else{
-                clickedSong(0);
-                }
-                clearInterval(nextSongTimer);
-            }, music[currentSongID][6] * 1000);
-        
-    } else if (mode === 0) {
-        $("#playersrc").attr("src", url);
-        audio.pause();
-        audio.load();
-        audio.play();
-    }
-}
 
 //Song Links
 if (window.location.hash) {
@@ -67,6 +28,27 @@ if (window.location.hash) {
     });
     playSong(window.location.hash.replace(/#/g, "spotify:track:"), 1);
 }
+
+
+//Get Country Code
+$.getJSON('http://freegeoip.net/json/', function (data) {
+    countryCode = data.country_code;
+    getFeed(countryCode);
+});
+
+//Key Controls
+$(window).keypress(function (e) {
+    if (e.which == 113) {
+        if (currentSongID !== false) {
+            clickedSong(currentSongID - 1);
+        }
+    }
+    if (e.which == 101) {
+        if (currentSongID !== false) {
+            clickedSong(currentSongID + 1);
+        }
+    }
+});
 
 //Detect If Spotify Is Installed
 if (!isMobile.t()) {
@@ -85,11 +67,22 @@ if (!isMobile.t()) {
                     timeout: 1000,
                     url: 'https://wlunlyjfwn.spotilocal.com:4371/r',
                     error: function (jqXHR) {
-
                         if (jqXHR.status == '404') {
                             hasSpotify = true;
                         } else {
-                            hasSpotify = false;
+                            if (localStorage.getItem("wantSpotify") == "true") {
+                                hasSpotify = true;
+                            } else if (localStorage.getItem("wantSpotify") == "false") {
+                                hasSpotify = false;
+                            } else {
+                                if (confirm("Is Spotify installed on this device?\nPress 'Ok' if it is or 'Cancel' if it isn't'")) {
+                                    hasSpotify = true;
+                                    localStorage.setItem("wantSpotify", "true")
+                                } else {
+                                    hasSpotify = false;
+                                    localStorage.setItem("wantSpotify", "false")
+                                }
+                            }
                         }
                         console.info('This ↑ ' + jqXHR.status + ' ↑ is checking if Spotify is installed');
                     }
@@ -102,22 +95,34 @@ if (!isMobile.t()) {
     });
 
 } else {
-    if (confirm("Do you want to play via Spotify?")) {
+    if (localStorage.getItem("wantSpotify") == "true") {
         hasSpotify = true;
-    } else {
+    } else if (localStorage.getItem("wantSpotify") == "false") {
         hasSpotify = false;
+    } else {
+        if (confirm("Is Spotify installed on this device?\nPress 'Ok' if it is or 'Cancel' if it isn't'")) {
+            hasSpotify = true;
+            localStorage.setItem("wantSpotify", "true")
+        } else {
+            hasSpotify = false;
+            localStorage.setItem("wantSpotify", "false")
+        }
     }
 
 }
-//Get Country Code
-$.getJSON('http://freegeoip.net/json/', function (data) {
-    countryCode = data.country_code;
 
-    //Get basic iTunes Feed
-    console.log();
+//Get basic iTunes Feed
+function getFeed(countryCode, genre) {
+    if (genre) {
+        var url = "http://itunes.apple.com/" + countryCode + "/rss/topsongs/limit=50/genre=" + genre + "/explicit=true/json"
+    } else {
+        var url = "http://itunes.apple.com/" + countryCode + "/rss/topsongs/limit=50/explicit=true/json"
+    }
+    $('.music').empty();
+    music = [];
     $.ajax({
         type: 'GET',
-        url: "http://itunes.apple.com/" + countryCode + "/rss/topsongs/limit=50/explicit=true/json",
+        url: url,
         dataType: 'json',
         success: function (data) {
             var items = data.feed.entry;
@@ -134,43 +139,14 @@ $.getJSON('http://freegeoip.net/json/', function (data) {
                 }
                 var songInfo = [title, artist, thumbnail, itunesURL, encodeURIComponent(title)];
                 music.push(songInfo);
-                var image = $('<img class="art" src="' + thumbnail + '">')
-                //For Future Fav Feature
-                /*var image = $('<img class="art" src="' + thumbnail + '">').hover(function () {
-                    $(this).css("background-image", "url(" + $(this).attr("src") + ")");
-                    $(this).attr("src", "data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4KPHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPgo8cGF0aCBvcGFjaXR5PSIwLjc1IiBmaWxsPSIjMjMyMzIzIiBkPSJNMCwwdjE3MGgxNzBWMEgweiBNMTI5LjQ2NCw3OS4wOTJsLTI0LjMzNywxNy42ODZsOS4zMzUsMjguNzEzCgljMS43LDUuMjMxLTAuNTUsNi44NjYtNSwzLjYzNWwtMjQuNDM1LTE3Ljc0bC0yNC40MDUsMTcuNzM2Yy00LjQ0OSwzLjIzMy02LjY5OCwxLjU5OS00Ljk5OC0zLjYzMWw5LjMyNS0yOC42ODJsLTI0LjQxLTE3LjcyMQoJYy00LjQ1MS0zLjIzMS0zLjU5Mi01Ljg3NSwxLjkwOC01Ljg3NUg3Mi42Mmw5LjMzMS0yOC43MDJjMS43LTUuMjMxLDQuNDgzLTUuMjMxLDYuMTg0LDBsOS4zMzEsMjguNzAyaDMwLjA4NwoJQzEzMy4wNTMsNzMuMjEzLDEzMy45MTMsNzUuODU4LDEyOS40NjQsNzkuMDkyeiIvPgo8L3N2Zz4=");
-                    var thisElement = $(this);
-                    var timer = setInterval(function () {
-                        if (thisElement.is(":hover")) {
-                            thisElement.attr("src", "data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4KPHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciCgkgd2lkdGg9IjE3MHB4IiBoZWlnaHQ9IjE3MHB4Ij4KPHBhdGggb3BhY2l0eT0iMC44NSIgZmlsbD0iI0ZGRUUxRCIgZD0iTTQwLjUzOSw3OS4wODhjLTQuNDUxLTMuMjMxLTMuNTkyLTUuODc1LDEuOTA4LTUuODc1aDg1LjEwNmM1LjUsMCw2LjM2LDIuNjQ1LDEuOTExLDUuODc5CglsLTY4Ljg0Miw1MC4wM2MtNC40NDksMy4yMzMtNi42OTgsMS41OTktNC45OTgtMy42MzFsMjYuMzI3LTgwLjk4YzEuNy01LjIzMSw0LjQ4My01LjIzMSw2LjE4NCwwbDI2LjMyNyw4MC45OAoJYzEuNyw1LjIzMS0wLjU1LDYuODY2LTUsMy42MzVMNDAuNTM5LDc5LjA4OHoiLz4KPC9zdmc+")
-                        }
-                        clearInterval(timer);
-                    }, 1000)
-                }, function () {
-                    $(this).attr("src", $(this).css("background-image").replace("url(", "").replace(")", ""));
-                    $(this).css("background-image", "");
-                });//*/
+                var image = $('<img class="art" src="' + thumbnail + '">');
                 $('.music').append($('<article class="song"><p>' + title + '</p><p>' + artist + '</p></article>').prepend(image).click(clickedSong));
 
             }
         }
     });
-});
-// Fun debug suffix func
-function numSuffix(num) {
-    if (num > 3 && num < 21) // catch teens, which are all 'th'
-        sufx = num + 'th';
-    else if (num % 10 == 1) // exceptions ending in '1'
-        sufx = num + 'st';
-    else if (num % 10 == 2) // exceptions ending in '2'
-        sufx = num + 'nd';
-    else if (num % 10 == 3) // exceptions ending in '3'
-        sufx = num + 'rd';
-    else
-        sufx = num + 'th';
-
-    return sufx
 }
+
 // Play Song Handler
 function clickedSong(songPos) {
     var songPosition;
@@ -178,8 +154,8 @@ function clickedSong(songPos) {
         songPosition = songPos;
         currentSongID = songPos;
     } else {
-        songPosition = $(this).index() - 1;
-        currentSongID = $(this).index() - 1;
+        songPosition = $(this).index();
+        currentSongID = $(this).index();
     }
     console.info("User clicked song " + songPosition + " (" + numSuffix(songPosition + 1) + ")");
     var song = music[songPosition];
@@ -196,6 +172,11 @@ function clickedSong(songPos) {
             var num = 0;
             var found = false;
             while (found === false) {
+                //IF NO SONGS RETURNED
+                if (!data.tracks[0]) {
+                    console.info("Tried with title and artist 20 times with no matches");
+                    playSong(song[3], 0);
+                }
                 //IF ARTIST IS MATCH
                 var artistString;
                 for (var key in data.tracks[num].artists) {
@@ -225,6 +206,11 @@ function clickedSong(songPos) {
                         "q": song[4] + " " + artist
                     }, function (data) {
                         var num = 0;
+                        //IF NO SONGS RETURNED
+                        if (!data.tracks[0]) {
+                            console.info("Tried with title and artist 20 times with no matches");
+                            playSong(song[3], 0);
+                        }
                         var found = false;
                         while (found === false) {
                             var artistString;
@@ -269,4 +255,45 @@ function clickedSong(songPos) {
     }
     $(".chngBG").remove();
     $('head').append("<style class='chngBG'>body::before{ background-image:url(" + song[2] + ")!important;}</style>");
+}
+
+
+//Basic Functions
+function playSong(url, mode) {
+    if (mode === 1) {
+        window.frames.invisif.document.location.href = url;
+        if (nextSongTimer !== false) {
+            clearInterval(nextSongTimer);
+        }
+        nextSongTimer = setInterval(function () {
+            if (currentSongID + 1) {
+                clickedSong(currentSongID + 1);
+            } else {
+                clickedSong(0);
+            }
+            clearInterval(nextSongTimer);
+        }, music[currentSongID][6] * 1000);
+
+    } else if (mode === 0) {
+        $("#playersrc").attr("src", url);
+        audio.pause();
+        audio.load();
+        audio.play();
+    }
+}
+
+// Fun debug suffix func
+function numSuffix(num) {
+    if (num > 3 && num < 21) // catch teens, which are all 'th'
+        sufx = num + 'th';
+    else if (num % 10 == 1) // exceptions ending in '1'
+        sufx = num + 'st';
+    else if (num % 10 == 2) // exceptions ending in '2'
+        sufx = num + 'nd';
+    else if (num % 10 == 3) // exceptions ending in '3'
+        sufx = num + 'rd';
+    else
+        sufx = num + 'th';
+
+    return sufx
 }
