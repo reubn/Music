@@ -125,6 +125,17 @@ function getFeed(countryCode, genre) {
         url: url,
         dataType: 'json',
         success: function (data) {
+            tempArray = {};
+            for (var n = 0; n < (data.feed.entry.length); n++) {
+                console.log(tempArray);
+                console.log(data.feed.entry);
+                item = data.feed.entry[n];
+                if (tempArray[item['im:name'].label] >= 0) {
+                    data.feed.entry.splice(n, 1);
+                    n--;
+                }
+                tempArray[item['im:name'].label] = n;
+            }
             var items = data.feed.entry;
 
             for (var n = 0; n < items.length; n++) {
