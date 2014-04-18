@@ -128,7 +128,7 @@ function getFeed(countryCode, genre) {
             var normalLength = data.feed.entry.length;
             tempArray = {};
             for (var n = 0; n < data.feed.entry.length; n++) {
-                item = data.feed.entry[n], 0 <= tempArray[item["im:name"].label] && (data.feed.entry.splice(n, 1), n--), tempArray[item["im:name"].label] = n;
+                item = data.feed.entry[n], 0 <= tempArray[item["im:name"].label.replace(/ *\[[^)]*\] *| *\([^)]*\) */g, "")] && (data.feed.entry.splice(n, 1), n--), tempArray[item["im:name"].label.replace(/ *\[[^)]*\] *| *\([^)]*\) */g, "")] = n;
             }
             console.log(normalLength + " - " + data.feed.entry.length + " = " + (normalLength - data.feed.entry.length) + " songs removed");
             var items = data.feed.entry;
